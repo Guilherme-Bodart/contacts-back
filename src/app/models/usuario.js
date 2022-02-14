@@ -29,7 +29,7 @@ const UsuarioSchema = new mongoose.Schema({
     required: true,
   },
   telefone: {
-    type: Number,
+    type: String,
     required: true,
   },
   estado: {
@@ -49,7 +49,7 @@ const UsuarioSchema = new mongoose.Schema({
     required: true,
   },
   numero: {
-    type: Number,
+    type: String,
   },
   complemento: {
     type: String,

@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
   } else if (nome === "" || nome === undefined) {
     return res.status(400).send({ error: "Campo Nome vazio" });
   }
-
+  
   try {
     if (await Usuario.findOne({ email })) {
       return res.status(400).send({ error: "E-mail já cadastrado" });
