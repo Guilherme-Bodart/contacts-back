@@ -20,16 +20,18 @@ router.post("/register", async (req, res) => {
     email,
     senha,
     nome,
-    sexo,
+    sobrenome,
     dataNascimento,
     telefone,
     estado,
     cidade,
     bairro,
     rua,
+    numero,
     complemento,
   } = req.body;
 
+  console.log(req.body);
   if (email === "" || email === undefined) {
     return res.status(400).send({ error: "Campo E-Mail vazio" });
   } else if (senha === "" || senha === undefined) {
@@ -52,6 +54,7 @@ router.post("/register", async (req, res) => {
       email,
       senha,
       nome,
+      sobrenome,
       dataNascimento,
       telefone,
       estado,
@@ -61,6 +64,7 @@ router.post("/register", async (req, res) => {
       numero,
       complemento,
     });
+    console.log(usuario);
     usuario.senha = undefined;
 
     return res.send({

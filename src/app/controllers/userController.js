@@ -30,12 +30,14 @@ router.put("/:usuarioId", async (req, res) => {
     const {
       email,
       nome,
+      sobrenome,
       dataNascimento,
       telefone,
       estado,
       cidade,
       bairro,
       rua,
+      numero,
       complemento,
       contatos,
     } = req.body;
@@ -49,12 +51,14 @@ router.put("/:usuarioId", async (req, res) => {
 
     usuario.email = email;
     usuario.nome = nome;
+    usuario.sobrenome = sobrenome;
     usuario.dataNascimento = dataNascimento;
     usuario.telefone = telefone;
     usuario.estado = estado;
     usuario.cidade = cidade;
     usuario.bairro = bairro;
     usuario.rua = rua;
+    usuario.numero = numero;
     usuario.complemento = complemento;
     usuario.contatos = contatos;
 
