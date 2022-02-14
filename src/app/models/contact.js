@@ -10,7 +10,7 @@ const ContatoSchema = new mongoose.Schema({
         required: true,
     },
     telefone: {
-        type: Number,
+        type: String,
         required: true,
     },
     dataNascimento: {
@@ -34,10 +34,11 @@ const ContatoSchema = new mongoose.Schema({
         required: true,
     },
     numero: {
-        type: Number,
+        type: String,
     },
     complemento: {
-    required: true,
+        type: String,
+        required: true,
     },
     email: {
         type: String,
