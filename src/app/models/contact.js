@@ -38,7 +38,6 @@ const ContatoSchema = new mongoose.Schema({
     },
     complemento: {
         type: String,
-        required: true,
     },
     email: {
         type: String,

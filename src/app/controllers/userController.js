@@ -2,14 +2,14 @@ const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 
 const Usuario = require("../models/usuario");
-
+const Contato = require("../models/contact")
 const router = express.Router();
 
 router.use(authMiddleware);
 
 router.get("/", async (req, res) => {
   try {
-    const usuarios = await Usuario.find();
+    const usuarios = await Usuario.find().populate('contatos');
     return res.send({ usuarios });
   } catch (err) {
     return res.status(400).send({ error: "Erro em carregar os usuários" });
@@ -18,49 +18,56 @@ router.get("/", async (req, res) => {
 
 router.get("/:usuarioId", async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.params.usuarioId);
+    const usuario = await Usuario.findById(req.params.usuarioId).populate('contatos');
     return res.send({ usuario });
   } catch (err) {
     return res.status(400).send({ error: "Erro em carregar o usuário" });
   }
 });
 
-router.put("/:usuarioId", async (req, res) => {
+
+router.get("/:usuarioId/contacts", async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.params.usuarioId).populate('contatos');
+    const contatos = usuario.contatos
+    return res.send({ contatos });
+  } catch (err) {
+    return res.status(400).send({ error: "Erro em carregar os usuários" });
+  }
+});
+
+router.put("/:usuarioId/contacts", async (req, res) => {
   try {
     const {
-      email,
-      nome,
-      sobrenome,
-      dataNascimento,
-      telefone,
-      estado,
-      cidade,
-      bairro,
-      rua,
-      numero,
-      complemento,
-      contatos,
+      contatos
     } = req.body;
 
-    var usuario = await Usuario.findById(req.params.usuarioId);
-    if (email != usuario.email) {
-      if (await Usuario.findOne({ email })) {
-        return res.status(400).send({ error: "e-mail já cadastrado" });
+    let usuario = await Usuario.findById(req.params.usuarioId);
+    for (const contato of contatos) {
+      if (!contato._id) {
+        let con = await Contato.create(contato)
+        usuario.contatos.push(con._id)
+      } else {
+        await Contato.findOneAndUpdate({ _id: contato._id }, contato, { upsert: true, new: true });
       }
     }
 
-    usuario.email = email;
-    usuario.nome = nome;
-    usuario.sobrenome = sobrenome;
-    usuario.dataNascimento = dataNascimento;
-    usuario.telefone = telefone;
-    usuario.estado = estado;
-    usuario.cidade = cidade;
-    usuario.bairro = bairro;
-    usuario.rua = rua;
-    usuario.numero = numero;
-    usuario.complemento = complemento;
-    usuario.contatos = contatos;
+    await usuario.save();
+    return res.send({ usuario });
+
+  } catch (err) {
+    return res.status(400).send({ error: err });
+  }
+
+})
+
+router.put("/:usuarioId", async (req, res) => {
+  try {
+    let usuario = await Usuario.findById(req.params.usuarioId);
+    Usuario.findOneAndUpdate({ _id: req.params.usuarioId }, req.body, { upsert: true }, function (err, doc) {
+      if (err) return res.send(500, { error: err });
+      return res.send('Succesfully saved.');
+    });
 
     await usuario.save();
     return res.send({ usuario });

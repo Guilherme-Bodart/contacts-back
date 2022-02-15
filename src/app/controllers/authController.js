@@ -16,7 +16,7 @@ function generateToken(params = {}) {
 }
 
 router.post("/register", async (req, res) => {
-  var {
+  let {
     email,
     senha,
     nome,
@@ -38,13 +38,13 @@ router.post("/register", async (req, res) => {
   } else if (nome === "" || nome === undefined) {
     return res.status(400).send({ error: "Campo Nome vazio" });
   }
-  
+
   try {
     if (await Usuario.findOne({ email })) {
       return res.status(400).send({ error: "E-mail já cadastrado" });
     }
 
-    var usuario;
+    let usuario;
 
     const hash = await bcrypt.hash(senha, 10);
     senha = hash;
@@ -77,7 +77,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/authenticate", async (req, res) => {
-  var { email, senha } = req.body;
+  let { email, senha } = req.body;
   const usuario = await Usuario.findOne({ email }).select("+senha");
 
   if (!usuario) {
@@ -103,10 +103,7 @@ router.post("/authenticate", async (req, res) => {
 });
 
 router.post("/forgot_password", async (req, res) => {
-  var { email } = req.query;
-  if (email === undefined) {
-    email = req.body.email;
-  }
+  let email = req.body.email;
 
   try {
     const usuario = await Usuario.findOne({ status: 1, email });
@@ -149,10 +146,7 @@ router.post("/forgot_password", async (req, res) => {
 });
 
 router.post("/reset_password", async (req, res) => {
-  var { senha, token } = req.query;
-  if (senha === undefined) {
-    var { senha, token } = req.body;
-  }
+  let { senha, token } = req.body;
 
   try {
     const usuario = await Usuario.findOne({ senhaResetToken: token }).select(
