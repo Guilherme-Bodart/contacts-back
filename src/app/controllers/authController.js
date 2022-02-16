@@ -18,7 +18,7 @@ function generateToken(params = {}) {
 router.post("/register", async (req, res) => {
   let {
     email,
-    senha,
+    password,
     nome,
     sobrenome,
     dataNascimento,
@@ -29,7 +29,8 @@ router.post("/register", async (req, res) => {
     rua,
     numero,
     complemento,
-  } = req.body;
+  } = req.body.usuario;
+  let senha = password;
 
   if (email === "" || email === undefined) {
     return res.status(400).send({ error: "Campo E-Mail vazio" });
@@ -43,12 +44,10 @@ router.post("/register", async (req, res) => {
     if (await Usuario.findOne({ email })) {
       return res.status(400).send({ error: "E-mail já cadastrado" });
     }
-
     let usuario;
 
     const hash = await bcrypt.hash(senha, 10);
     senha = hash;
-
     usuario = await Usuario.create({
       email,
       senha,
@@ -64,7 +63,6 @@ router.post("/register", async (req, res) => {
       complemento,
     });
     usuario.senha = undefined;
-
     return res.send({
       usuario,
       token: generateToken({ id: usuario._id }),
@@ -77,7 +75,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/authenticate", async (req, res) => {
-  let { email, senha } = req.body;
+  let { email, password } = req.body;
   const usuario = await Usuario.findOne({ email }).select("+senha");
 
   if (!usuario) {
@@ -86,7 +84,7 @@ router.post("/authenticate", async (req, res) => {
     });
   }
 
-  if (!(await bcrypt.compare(senha, usuario.senha))) {
+  if (!(await bcrypt.compare(password, usuario.senha))) {
     return res.status(400).send({
       error: "senha inválida",
     });
