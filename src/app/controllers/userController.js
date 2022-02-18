@@ -41,17 +41,16 @@ router.put("/:usuarioId/contacts", async (req, res) => {
     const {
       contatos
     } = req.body;
-
-    let usuario = await Usuario.findById(req.params.usuarioId);
+    let usuario = await Usuario.findById(req.params.usuarioId).populate('contatos');
     for (const contato of contatos) {
       if (!contato._id) {
+        delete contato._id
         let con = await Contato.create(contato)
         usuario.contatos.push(con._id)
       } else {
         await Contato.findOneAndUpdate({ _id: contato._id }, contato, { upsert: true, new: true });
       }
     }
-
     await usuario.save();
     return res.send({ usuario });
 
@@ -63,7 +62,7 @@ router.put("/:usuarioId/contacts", async (req, res) => {
 
 router.put("/:usuarioId", async (req, res) => {
   try {
-    let usuario = await Usuario.findById(req.params.usuarioId);
+    let usuario = await Usuario.findById(req.params.usuarioId).populate('contatos');
     Usuario.findOneAndUpdate({ _id: req.params.usuarioId }, req.body, { upsert: true }, function (err, doc) {
       if (err) return res.send(500, { error: err });
       return res.send('Succesfully saved.');

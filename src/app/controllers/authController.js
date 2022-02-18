@@ -76,7 +76,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/authenticate", async (req, res) => {
   let { email, password } = req.body;
-  const usuario = await Usuario.findOne({ email }).select("+senha");
+  const usuario = await Usuario.findOne({ email }).select("+senha").populate('contatos');
 
   if (!usuario) {
     return res.status(400).send({
